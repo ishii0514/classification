@@ -14,6 +14,11 @@ def save_classify(image_path, dummy=False):
         画像ファイルパス
     dummy: bool
         ダミーAPIの使用
+
+    Returns
+    -------
+    Result
+        分類結果
     """
     # class取得
     c = Classifier(image_path, dummy)
@@ -28,6 +33,11 @@ def save_classify(image_path, dummy=False):
 def history():
     """
     これまでの結果を表示
+
+    Yields
+    -------
+    Result
+        分類結果
     """
     m = ResultModel(settings.DATABASES['default'])
     return m.dump()
@@ -72,7 +82,7 @@ def _post(image_path):
 
     Returns
     -------
-    resoponse: Response
+    resoponse: json
     start_time: int
     end_time: int
     """
@@ -88,6 +98,17 @@ def _post(image_path):
 def _dummy_post(image_path):
     """
     _post()のダミー関数。デバッグ用
+
+    Parameters
+    ----------
+    image_path: string
+        画像ファイルパス
+
+    Returns
+    -------
+    resoponse: json
+    start_time: int
+    end_time: int
     """
     start = int(time.time())  # 開始時間(unix time)
     time.sleep(1)

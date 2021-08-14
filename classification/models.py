@@ -70,6 +70,11 @@ class ResultModel:
     def dump(self):
         """
         全行取得
+
+        Yields
+        -------
+        Result
+            分類結果
         """
         conn = sqlite3.connect(self.db)
         try:
