@@ -1,6 +1,7 @@
 # About
 
-- イメージファイルを指定すると、画像分類する API で画像を分類しその結果を DB に保存する。
+- イメージファイルを指定すると、画像分類用 Web API で画像を分類し、結果を DB に保存する。
+- コマンドラインから実行する。
 
 # Environment
 
@@ -9,20 +10,22 @@
 
 # Usage
 
-コマンドラインから使用する。
+## 画像を分類する
 
-### 画像を分類する場合
+### ダミーの API を使用して実行する場合
+
+```
+python3 -m classification cl -d /path/image_file.png
+```
+
+### Web API が実在する場合
 
 ```
 python3 -m classification cl /path/image_file.png
 ```
 
-### DB に格納された結果を参照する場合
+## DB に格納された結果を参照する
 
 ```
 python3 -m classification hs
 ```
-
-### その他
-
-画像分類の API は存在しないため、実際に動作させる際は`Classifier#get_result()`で`_post()`の代わりに`_dummy_post()`を使用してください。

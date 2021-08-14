@@ -4,7 +4,7 @@ from .models import ResultModel, Result
 from . import settings
 
 
-def save_classify(image_path):
+def save_classify(image_path, dummy=False):
     """
     画像を分類してDBへ保存
 
@@ -12,26 +12,25 @@ def save_classify(image_path):
     ----------
     image_path: string
         画像ファイルパス
+    dummy: bool
+        ダミーAPIの使用
     """
     # class取得
-    c = Classifier(image_path)
+    c = Classifier(image_path, dummy)
     result = c.get_result()
     # DBへセーブ
     m = ResultModel(settings.DATABASES['default'])
     m.save(result)
 
-    print('Result:')
-    print(result)
+    return result
 
 
-def show_history():
+def history():
     """
     これまでの結果を表示
     """
     m = ResultModel(settings.DATABASES['default'])
-    print('History:')
-    for r in m.dump():
-        print(r)
+    return m.dump()
 
 
 class Classifier:
@@ -39,8 +38,9 @@ class Classifier:
     分類結果を取得する
     """
 
-    def __init__(self, image_path):
+    def __init__(self, image_path, dummy=False):
         self.image_path = image_path
+        self.post = _dummy_post if dummy else _post
 
     def get_result(self):
         """
@@ -51,9 +51,7 @@ class Classifier:
         Result
             分類結果
         """
-        res, start, end = _post(self.image_path)
-        # res, start, end = _dummy_post(self.image_path)
-
+        res, start, end = self.post(self.image_path)
         return Result(-1, self.image_path,
                       res['success'], res['message'],
                       int(res['estimated_data']['class']
@@ -89,7 +87,7 @@ def _post(image_path):
 
 def _dummy_post(image_path):
     """
-    デバッグ用
+    _post()のダミー関数。デバッグ用
     """
     start = int(time.time())  # 開始時間(unix time)
     time.sleep(1)
@@ -98,8 +96,8 @@ def _dummy_post(image_path):
         'success': True,
         'message': 'success',
         'estimated_data': {
-            'class': 3,
-            'confidence': 0.8683
+            'class': 2,
+            'confidence': 0.5555
         }
     }
     return res, start, end
